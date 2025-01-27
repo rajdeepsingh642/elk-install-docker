@@ -1,0 +1,150 @@
+# version: '3.5'
+
+# services:
+#   elasticsearch:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+#     volumes:
+#       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+#       - elasticsearch:/usr/share/elasticsearch/data
+#       - /etc/timezone:/etc/timezone:ro
+#       - /etc/localtime:/etc/localtime:ro
+#     ports:
+#       - "9200:9200"
+#       - "9300:9300"
+#     environment:
+#       ES_JAVA_OPTS: "-Xmx4g -Xms4g"
+#       ELASTIC_PASSWORD: changeme
+#       discovery.type: single-node
+#       network.publish_host: _site_
+#     networks:
+#       - elk
+
+#   logstash:
+#     image: docker.elastic.co/logstash/logstash:7.15.0
+#     volumes:
+#       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+#       - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#       - /etc/timezone:/etc/timezone:ro
+#       - /etc/localtime:/etc/localtime:ro
+#       - ./data:/usr/share/logstash/data
+#     ports:
+#       - "5044:5044"
+#     environment:
+#       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+#     depends_on:
+#       - elasticsearch
+#     networks:
+#       - elk
+
+#   kibana:
+#     image: docker.elastic.co/kibana/kibana:7.15.0
+#     volumes:
+#       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+#       - /etc/timezone:/etc/timezone:ro
+#       - /etc/localtime:/etc/localtime:ro
+#     ports:
+#       - "5601:5601"
+#     networks:
+#       - elk
+#   filebeat:
+#     image: docker.elastic.co/beats/filebeat:7.15.0
+#     container_name: filebeat
+#     user: root  # Run as root to perform chown and chmod
+#     command: /bin/bash -c "chown root:filebeat /usr/share/filebeat/filebeat.yml && chmod 644 /usr/share/filebeat/filebeat.yml && filebeat -e -c /usr/share/filebeat/filebeat.yml"  # Corrected command with a closing quote
+#     volumes:
+#       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml  # Filebeat config
+#       - ./filebeat/logs:/usr/share/filebeat/logs 
+#       - ./filebeat/data:/usr/share/filebeat/data # Mount logs directory
+#     ports:
+#       - "9600:9600"
+#     depends_on:
+#       - logstash
+#     networks:
+#       - elk
+
+# networks:
+#   elk:
+#     driver: bridge
+
+# volumes:
+#   elasticsearch:
+
+
+
+
+
+version: '3.5'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch:/usr/share/elasticsearch/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx4g -Xms4g"
+      ELASTIC_PASSWORD: changeme
+      discovery.type: single-node
+      network.publish_host: _site_
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.15.0
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./data:/usr/share/logstash/data
+    ports:
+      - "5044:5044"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.0
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.15.0
+    container_name: filebeat
+    user: root  # Run as root to perform chown and chmod
+    command: >
+      /bin/bash -c "chown root:filebeat /usr/share/filebeat/filebeat.yml && 
+      chmod 644 /usr/share/filebeat/filebeat.yml && 
+      filebeat -e -c /usr/share/filebeat/filebeat.yml"
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml  # Filebeat config
+      - ./filebeat/logs:/usr/share/filebeat/logs 
+      - ./filebeat/data:/usr/share/filebeat/data # Mount logs directory
+    ports:
+      - "9600:9600"
+    depends_on:
+      - logstash
+    networks:
+      - elk
+
+networks:
+  elk:
+    driver: bridge
+
+volumes:
+  elasticsearch:
+    driver: local
