@@ -3,7 +3,7 @@ By this you can make your elk stack in one command
 
 Just Pull this via
 
-sudo git pull https://github.com/talhayameen/elk-stack-dockercompose.git
+sudo git clone https://github.com/rajdeepsingh642/elk-install-docker.git
 
 cd to the folder,
 
