@@ -16,3 +16,10 @@ elasticsearch.password: changeme
 
 
 xpack.encryptedSavedObjects.encryptionKey: bfd751039a44561318dd23d5e2963ff1
+
+# elasticsearch.hosts: ["https://elasticsearch:9200"]
+# elasticsearch.username: "elastic"
+# elasticsearch.password: "changeme"
+# server.ssl.enabled: true
+# server.ssl.certificate: /usr/share/kibana/config/certs/cert.pem
+# server.ssl.key: /usr/share/kibana/config/certs/key.pem
