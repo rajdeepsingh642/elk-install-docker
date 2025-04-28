@@ -83,6 +83,7 @@ services:
       - elasticsearch:/usr/share/elasticsearch/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+#      - ./certs:/usr/share/elasticsearch/config/certs:ro   # <-- Add this line
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -117,6 +118,7 @@ services:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+#      - ./certs:/usr/share/kibana/config/certs:ro 
     ports:
       - "5601:5601"
     networks:
