@@ -1,0 +1,27 @@
+filebeat.inputs:
+  - type: container
+    paths:
+      - /var/lib/docker/containers/*/*.log
+    processors:
+      - add_docker_metadata: ~
+
+output.elasticsearch:
+  hosts:
+    - http://es-master:9200
+    - http://es-worker-1:9200
+    - http://es-worker-2:9200
+  index: "filebeat-%{+yyyy.MM.dd}"  
+setup.kibana:
+  host: "http://kibana:5601"
+
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts:
+    - http://es-master:9200
+    - http://es-worker-1:9200
+    - http://es-worker-2:9200
+
+setup.template.name: "filebeat-custom"
+setup.template.pattern: "filebeat-*"
+setup.template.priority: 200  # Set a custom priority to avoid conflict
+setup.template.fields: "/usr/share/filebeat/fields.yml"     

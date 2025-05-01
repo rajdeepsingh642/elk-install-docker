@@ -95,7 +95,23 @@ services:
     networks:
       - esnet
 
-
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.13.4
+    container_name: filebeat
+    user: root
+    command: filebeat -e --strict.perms=false
+    volumes:
+      - ./filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data/filebeat-data:/usr/share/filebeat/data
+    depends_on:
+      - es-master
+      - es-worker-1
+      - es-worker-2
+    restart: always
+    networks:
+      - esnet
 networks:
   esnet:
     driver: bridge

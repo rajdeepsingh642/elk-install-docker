@@ -1,6 +1,6 @@
 cluster.name: es-cluster
 node.name: es-worker-2
-node.roles: [ data ]
+node.roles: [ data, remote_cluster_client ]
 
 # Memory settings
 bootstrap.memory_lock: true
