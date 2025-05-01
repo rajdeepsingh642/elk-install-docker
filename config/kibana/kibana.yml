@@ -7,4 +7,4 @@ elasticsearch.hosts:
   - "http://es-worker-2:9200"
 
 elasticsearch.ssl.verificationMode: none
-
+xpack.monitoring.ui.enabled: true

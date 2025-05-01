@@ -14,4 +14,4 @@ cluster.initial_master_nodes: [ "es-master" ]
 
 # Disable security (no SSL)
 xpack.security.enabled: false
-
+xpack.monitoring.collection.enabled: true
