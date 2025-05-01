@@ -1,0 +1,17 @@
+cluster.name: es-cluster
+node.name: es-worker-2
+node.roles: [ data ]
+
+# Memory settings
+bootstrap.memory_lock: true
+
+# Network settings
+network.host: 0.0.0.0
+
+# Discovery settings for multi-node setup
+discovery.seed_hosts: [ "es-master", "es-worker-1" ]
+cluster.initial_master_nodes: [ "es-master" ]
+
+# Disable security (no SSL)
+xpack.security.enabled: false
+

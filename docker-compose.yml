@@ -1,0 +1,102 @@
+version: '3.8'
+services:
+  es-master:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: es-master
+    environment:
+            - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - ./config/es-master/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./data/es-master:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
+
+  es-worker-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: es-worker-1
+    environment:
+            - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - ./config/es-worker-1/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./data/es-worker-1:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - esnet
+
+  es-worker-2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: es-worker-2
+    environment:
+            - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - ./config/es-worker-2/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./data/es-worker-2:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - esnet
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+    depends_on:
+      - es-master
+      - es-worker-1
+      - es-worker-2
+    volumes:
+      - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - ./logs:/var/log/kibana
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.13.0
+    container_name: metricbeat
+    user: root
+    # command: ["metricbeat", "-e", "-system.hostfs=/hostfs"]
+    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+    depends_on:
+      - es-master
+      - es-worker-1
+      - es-worker-2
+      - kibana
+      
+    volumes:
+        - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+          #    - ./modules.d:/usr/share/metricbeat/modules.d:ro
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /:/hostfs:ro
+            # - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+            #   - ./modules.d:/usr/share/metricbeat/modules.d:ro
+        # - /var/run/docker.sock:/var/run/docker.sock
+        # - /:/hostfs:ro
+            #    - /proc:/hostfs/proc:ro
+            #   - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+         # - /:/hostfs:ro
+         #- /var/run/docker.sock:/var/run/docker.sock
+         # - ./modules.d:/usr/share/metricbeat/modules.d:ro
+         #   - metricbeat:/usr/share/metricbeat/data:rw
+         #       - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+
+          #   environment:
+            #   - ELASTICSEARCH_HOSTS=http://es-master:9200,http://es-worker-1:9200,http://es-worker-2:9200
+        #     - KIBANA_HOST=http://kibana:5601
+    networks:
+      - esnet
+
+
+networks:
+  esnet:
+    driver: bridge
+

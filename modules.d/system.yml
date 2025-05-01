@@ -1,0 +1,13 @@
+- module: system
+  period: 10s
+  enabled: true
+  metricsets:
+    - cpu
+    - memory
+    - network
+    - filesystem
+    - process
+  processors:
+    - drop_event.when.not.regexp:
+        system.process.name: '^metricbeat$'
+

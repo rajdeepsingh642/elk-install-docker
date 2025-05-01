@@ -1,0 +1,23 @@
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# Docker module to monitor containers
+metricbeat.modules:
+  - module: docker
+    metricsets:
+      - container
+      - cpu
+      - memory
+      - network
+      - diskio
+    period: 10s
+    hosts: ["unix:///var/run/docker.sock"]
+
+# Output to Elasticsearch (adjust if needed)
+output.elasticsearch:
+  hosts: ["http://es-master:9200", "http://es-worker-1:9200", "http://es-worker-2:9200"]
+
+setup.kibana:
+  host: "http://kibana:5601"
+

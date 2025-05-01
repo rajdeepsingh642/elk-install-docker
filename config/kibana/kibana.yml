@@ -1,0 +1,10 @@
+server.host: "0.0.0.0"
+server.port: 5601
+
+elasticsearch.hosts:
+  - "http://es-master:9200"
+  - "http://es-worker-1:9200"
+  - "http://es-worker-2:9200"
+
+elasticsearch.ssl.verificationMode: none
+
